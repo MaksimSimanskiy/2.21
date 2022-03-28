@@ -12,6 +12,33 @@ from pathlib import Path
 import argparse
 
 
+def create_db(database_path: Path) -> None:
+    """
+    Создать базу данных.
+    """
+    conn = sqlite3.connect(database_path)
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS shop_name (
+        shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+        )
+        """
+    )
+    cursor.execute(
+        """
+        CREATE TABLE IF NOT EXISTS shops (
+        shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        product TEXT NOT NULL,
+        price INTEGER NOT NULL,
+        FOREIGN KEY(shop_id) REFERENCES shop_name(shop_id)
+        )
+        """
+    )
+    conn.close()
+        
+        
 def add_shop(
         name: str,
         product: str,
@@ -46,33 +73,6 @@ def add_shop(
         (shop_id, price, product)
     )
     conn.commit()
-    conn.close()
-
-
-def create_db(database_path: Path) -> None:
-    """
-    Создать базу данных.
-    """
-    conn = sqlite3.connect(database_path)
-    cursor = conn.cursor()
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS shop_name (
-        shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL
-        )
-        """
-    )
-    cursor.execute(
-        """
-        CREATE TABLE IF NOT EXISTS shops (
-        shop_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        product TEXT NOT NULL,
-        price INTEGER NOT NULL,
-        FOREIGN KEY(shop_id) REFERENCES shop_name(shop_id)
-        )
-        """
-    )
     conn.close()
 
 
